@@ -67,6 +67,8 @@ fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
 }
 
 fn test_errors(iterations: usize, n: usize) {
+    println!("----- error test, iterations: {}, max steps: {} -----", iterations, n);
+
     let (mut sin_err_sum, mut sin_err_max) = (0f64, 0f64);
     let (mut cos_err_sum, mut cos_err_max) = (0f64, 0f64);
 
@@ -85,9 +87,13 @@ fn test_errors(iterations: usize, n: usize) {
 
     println!("mean/max absolute sin error: {}/{}", sin_err_sum / iterations as f64, sin_err_max);
     println!("mean/max absolute cos error: {}/{}", cos_err_sum / iterations as f64, cos_err_max);
+
+    println!("----- end of error test -----\n");
 }
 
 fn test_steps(iterations: usize, n: usize) {
+    println!("----- steps test, iterations: {}, max steps: {} -----", iterations, n);
+
     let mut steps_total = 0;
     let mut steps_distr_total = vec![0u64; n + 1];
     let mut steps_distr = vec![0f64; n + 1];
@@ -109,6 +115,8 @@ fn test_steps(iterations: usize, n: usize) {
     for i in 0..=n {
         println!("\t{}: {}", i, steps_distr[i]);
     }
+
+    println!("----- end of steps test -----\n");
 }
 
 fn main() {
