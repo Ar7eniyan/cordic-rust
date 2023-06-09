@@ -34,9 +34,12 @@ fn cos_products() -> &'static [f64] {
 }
 
 fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
+    const SINCOS_10E18_I: i64 = 10i64.pow(18);
+    const SINCOS_10E18_F: f64 = SINCOS_10E18_I as f64;
+
     // x and y are coordinates on a unit circle multiplied by 10^18
     // they are stored as integers to use fast multiplication by powers of 2
-    let (mut x, mut y) = (10i64.pow(18), 0i64);
+    let (mut x, mut y) = (SINCOS_10E18_I, 0i64);
     // phi is the angle of (x, y) vector to the positive x-axis
     // we rotdte the vector iteratively to match phi with theta
     let mut phi = 0f64;
@@ -61,8 +64,8 @@ fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
 
     // println!("steps made: {}", steps_made);
     // normalize the resulting vector, convert to float
-    let x = x as f64 * cos_products()[steps_made - 1] / 10f64.powi(18);
-    let y = y as f64 * cos_products()[steps_made - 1] / 10f64.powi(18);
+    let x = x as f64 * cos_products()[steps_made - 1] / SINCOS_10E18_F;
+    let y = y as f64 * cos_products()[steps_made - 1] / SINCOS_10E18_F;
     (y, x, steps_made)
 }
 
