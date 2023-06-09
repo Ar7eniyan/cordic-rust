@@ -69,6 +69,11 @@ fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
     (y, x, steps_made)
 }
 
+// angle in [-pi / 2, pi / 2)
+fn get_random_angle90() -> f64 {
+    (random::<f64>() - 0.5f64) * PI
+}
+
 fn test_errors(iterations: usize, n: usize) {
     println!("----- error test, iterations: {}, max steps: {} -----", iterations, n);
 
@@ -76,7 +81,7 @@ fn test_errors(iterations: usize, n: usize) {
     let (mut cos_err_sum, mut cos_err_max) = (0f64, 0f64);
 
     for _ in 0..iterations {
-        let angle = random::<f64>() * PI / 2f64;
+        let angle = get_random_angle90();
         let (sin, cos, _) = sincos(angle, n);
         
         let sin_err = (sin - angle.sin()).abs();
@@ -102,7 +107,7 @@ fn test_steps(iterations: usize, n: usize) {
     let mut steps_distr = vec![0f64; n + 1];
 
     for _ in 0..iterations {
-        let angle = random::<f64>() * PI / 2f64;
+        let angle = get_random_angle90();
         let (_, _, steps) = sincos(angle, n);
 
         steps_total += steps;
