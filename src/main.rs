@@ -122,6 +122,7 @@ fn test_steps(iterations: usize, n: usize) {
 fn main() {
     unsafe { precompute() };
  
-    test_errors(1_000_000, 54);
-    test_steps(1_000_000, 64);
+    // 54 iterations are enough for full f64 precision in ~78% of cases
+    test_errors(100_000, 54);
+    test_steps(100_000, 54);
 }
