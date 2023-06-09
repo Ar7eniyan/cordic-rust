@@ -28,9 +28,9 @@ fn cos_products() -> &'static [f64] {
 }
 
 fn sincos(theta: f64, n: usize) -> (f64, f64) {
-    // x and y are coordinates on a unit circle multiplied by 10^19
+    // x and y are coordinates on a unit circle multiplied by 10^18
     // they are stored as integers to use fast multiplication by powers of 2
-    let (mut x, mut y) = (10u64.pow(19), 0u64);
+    let (mut x, mut y) = (10i64.pow(18), 0i64);
     // phi is the angle of (x, y) vector to the positive x-axis
     // we rotdte the vector iteratively to match phi with theta
     let mut phi = 0f64;
@@ -55,14 +55,16 @@ fn sincos(theta: f64, n: usize) -> (f64, f64) {
 
     println!("steps made: {}", steps_made);
     // normalize the resulting vector, convert to float
-    let x = x as f64 * cos_products()[steps_made - 1] / 10f64.powi(19);
-    let y = y as f64 * cos_products()[steps_made - 1] / 10f64.powi(19);
+    let x = x as f64 * cos_products()[steps_made - 1] / 10f64.powi(18);
+    let y = y as f64 * cos_products()[steps_made - 1] / 10f64.powi(18);
     (y, x)
 }
 
 fn main() {
     unsafe { precompute() };
-    let angle = 75f64.to_radians();
+
+    // now it doesn't panic on low angles
+    let angle = 0.001;
 
     println!("{:?}", sincos(angle, 25));
     println!("{:?}", (angle.sin(), angle.cos()));
