@@ -34,6 +34,7 @@ fn sincos(theta: f64, n: usize) -> (f64, f64) {
     // phi is the angle of (x, y) vector to the positive x-axis
     // we rotdte the vector iteratively to match phi with theta
     let mut phi = 0f64;
+    let mut steps_made = n;
 
     for i in 0..n {
         println!("step {}: {} {} {}", i, x, y, phi);
@@ -41,16 +42,21 @@ fn sincos(theta: f64, n: usize) -> (f64, f64) {
             // rotate clockwise
             phi += tan_angles()[i];
             (x, y) = (x - (y >> i), y + (x >> i));
-        } else {
+        } else if phi > theta {
             // rotate counter-clockwise
             phi -= tan_angles()[i];
             (x, y) = (x + (y >> i), y - (x >> i));
+        } else {
+            // if phi == theta, we are done
+            steps_made = i;
+            break;
         }
     }
 
+    println!("steps made: {}", steps_made);
     // normalize the resulting vector, convert to float
-    let x = x as f64 * cos_products()[n - 1] / 10f64.powi(19);
-    let y = y as f64 * cos_products()[n - 1] / 10f64.powi(19);
+    let x = x as f64 * cos_products()[steps_made - 1] / 10f64.powi(19);
+    let y = y as f64 * cos_products()[steps_made - 1] / 10f64.powi(19);
     (y, x)
 }
 
