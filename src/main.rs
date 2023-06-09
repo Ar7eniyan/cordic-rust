@@ -130,7 +130,8 @@ fn test_steps(iterations: usize, n: usize) {
 fn main() {
     unsafe { precompute() };
  
-    // 54 iterations are enough for full f64 precision in ~78% of cases
+    // 54 iterations are enough for full f64 angle matching (phi == theta)
+    // in ~78% of cases (but not full accuracy, beacuse of fixed point)
     test_errors(100_000, 54);
     test_steps(100_000, 54);
 }
