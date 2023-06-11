@@ -64,3 +64,38 @@ pub fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
     let y = y as f64 * cos_products()[steps_made - 1];
     (y, x, steps_made)
 }
+
+// a tiny bit faster version that uses unsafe and doesn't return number of steps made
+pub fn sincos_faster(theta: f64, n: usize) -> (f64, f64) {
+    const SINCOS_10E18_I: i64 = 10i64.pow(18);
+
+    // x and y are coordinates on a unit circle multiplied by 10^18
+    // they are stored as fixed point integers to use fast multiplication by powers of 2
+    let (mut x, mut y) = (SINCOS_10E18_I, 0i64);
+    // phi is the angle of (x, y) vector to the positive x-axis
+    // we rotdte the vector iteratively to match phi with theta
+    let mut phi = 0f64;
+    let mut steps_made = n;
+
+    for i in 0..n {
+        if phi < theta {
+            // rotate clockwise
+            phi += unsafe { tan_angles().get_unchecked(i) };
+            (x, y) = (x - (y >> i), y + (x >> i));
+        } else if phi > theta {
+            // rotate counter-clockwise
+            phi -= unsafe { tan_angles().get_unchecked(i) };
+            (x, y) = (x + (y >> i), y - (x >> i));
+        } else {
+            // if phi == theta, we are done
+            steps_made = i;
+            break;
+        }
+    }
+
+    // normalize the resulting vector, convert to float
+    let cos_prod = unsafe { cos_products().get_unchecked(steps_made - 1) };
+    let x = x as f64 * cos_prod;
+    let y = y as f64 * cos_prod;
+    (y, x)
+}

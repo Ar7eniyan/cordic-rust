@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 
 use criterion::{criterion_group, criterion_main, Criterion, BenchmarkId, BatchSize};
-use cordic::{precompute, sincos};
+use cordic::{precompute, sincos_faster};
 use rand::prelude::*;
 
 fn get_random_angle90() -> f64 {
@@ -17,7 +17,7 @@ fn criterion_benchmark(c: &mut Criterion) {
             BenchmarkId::new("cordic", iterations.to_string() + " iterations"),
             |b| b.iter_batched(
                 || get_random_angle90(),
-                |angle| sincos(angle, iterations),
+                |angle| sincos_faster(angle, iterations),
                 BatchSize::SmallInput
             )
         );
