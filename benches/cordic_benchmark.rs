@@ -9,7 +9,7 @@ fn get_random_angle90() -> f64 {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    unsafe { precompute() };
+    precompute();
     let mut group = c.benchmark_group("f64 sin and cos");
 
     for iterations in (5..=60).step_by(5) {

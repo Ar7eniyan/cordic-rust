@@ -10,7 +10,8 @@ static mut TAN_ANGLES: [f64; MAX_N] = [0.0; MAX_N];
 // 10^-18 is to convert fixed point i64 to floating point, where 1.0 = 10^18
 static mut COS_PRODUCTS: [f64; MAX_N] = [0.0; MAX_N];
 
-pub unsafe fn precompute() {
+/// precompute all the needed values, should only be called once
+pub fn precompute() {  unsafe {
     TAN_ANGLES[0] =  1f64.atan();
     COS_PRODUCTS[0] = 1f64 / 2f64.sqrt() * 10f64.powi(-18);
 
@@ -18,7 +19,7 @@ pub unsafe fn precompute() {
         TAN_ANGLES[i] =  2f64.powi(-(i as i32)).atan();
         COS_PRODUCTS[i] = COS_PRODUCTS[i - 1] / (2f64.powi(-2 * i as i32) + 1f64).sqrt();
     }
-}
+}}
 
 // rust is really hard with static mut variables
 #[inline(always)]
@@ -66,6 +67,7 @@ pub fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
 }
 
 // a tiny bit faster version that uses unsafe and doesn't return number of steps made
+// assumes that n is in [1; 64]
 pub fn sincos_faster(theta: f64, n: usize) -> (f64, f64) {
     const SINCOS_10E18_I: i64 = 10i64.pow(18);
 

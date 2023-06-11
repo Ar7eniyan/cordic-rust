@@ -27,8 +27,8 @@ fn test_errors(iterations: usize, n: usize) {
         cos_err_max = cos_err_max.max(cos_err);
     }
 
-    println!("mean/max absolute sin error: {}/{}", sin_err_sum / iterations as f64, sin_err_max);
-    println!("mean/max absolute cos error: {}/{}", cos_err_sum / iterations as f64, cos_err_max);
+    println!("mean/max absolute sin error: {:.2e}/{:.2e}", sin_err_sum / iterations as f64, sin_err_max);
+    println!("mean/max absolute cos error: {:.2e}/{:.2e}", cos_err_sum / iterations as f64, cos_err_max);
 
     println!("----- end of error test -----\n");
 }
@@ -62,7 +62,7 @@ fn test_steps(iterations: usize, n: usize) {
 }
 
 fn main() {
-    unsafe { precompute() };
+    precompute();
  
     // 54 iterations are enough for full f64 angle matching (phi == theta)
     // in ~78% of cases (but not full accuracy, beacuse of fixed point)
