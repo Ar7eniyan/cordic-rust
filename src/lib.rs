@@ -5,13 +5,14 @@ const MAX_N: usize = 64;
 // angles, tangents of which are powers of 2,
 // namely such that tan(TAN_ANGLES[i]) = 2^-i
 static mut TAN_ANGLES: [f64; MAX_N] = [0.0; MAX_N];
-// accumulated product of cos(TAN_ANGLES[i]),
-// equal to product 1 / sqrt(2 ^ -2i + 1)
+// accumulated product of cos(TAN_ANGLES[i]), multiplied by 10^-18,
+// where cos(TAN_ANGLES[i]) is equal to 1 / sqrt(2 ^ -2i + 1)
+// 10^-18 is to convert fixed point i64 to floating point, where 1.0 = 10^18
 static mut COS_PRODUCTS: [f64; MAX_N] = [0.0; MAX_N];
 
 pub unsafe fn precompute() {
     TAN_ANGLES[0] =  1f64.atan();
-    COS_PRODUCTS[0] = 1f64 / 2f64.sqrt();
+    COS_PRODUCTS[0] = 1f64 / 2f64.sqrt() * 10f64.powi(-18);
 
     for i in 1..MAX_N {
         TAN_ANGLES[i] =  2f64.powi(-(i as i32)).atan();
@@ -31,10 +32,9 @@ fn cos_products() -> &'static [f64] {
 
 pub fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
     const SINCOS_10E18_I: i64 = 10i64.pow(18);
-    const SINCOS_10E18_F: f64 = SINCOS_10E18_I as f64;
 
     // x and y are coordinates on a unit circle multiplied by 10^18
-    // they are stored as integers to use fast multiplication by powers of 2
+    // they are stored as fixed point integers to use fast multiplication by powers of 2
     let (mut x, mut y) = (SINCOS_10E18_I, 0i64);
     // phi is the angle of (x, y) vector to the positive x-axis
     // we rotdte the vector iteratively to match phi with theta
@@ -60,7 +60,7 @@ pub fn sincos(theta: f64, n: usize) -> (f64, f64, usize) {
 
     // println!("steps made: {}", steps_made);
     // normalize the resulting vector, convert to float
-    let x = x as f64 * cos_products()[steps_made - 1] / SINCOS_10E18_F;
-    let y = y as f64 * cos_products()[steps_made - 1] / SINCOS_10E18_F;
+    let x = x as f64 * cos_products()[steps_made - 1];
+    let y = y as f64 * cos_products()[steps_made - 1];
     (y, x, steps_made)
 }
